@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ClipboardCopy, Eye, EyeOff, FileJson, Zap, X } from "lucide-react";
+import JsonTreeView from "@/components/JsonTreeView";
 
 const generateRandomJson = () => {
   const randomData = {
@@ -41,23 +42,17 @@ const Index = () => {
     }
 
     try {
-      // First attempt to parse the JSON
       const parsedJson = JSON.parse(inputToFormat);
       const prettyJson = JSON.stringify(parsedJson, null, 2);
       setFormattedJson(prettyJson);
       updateJsonStats(parsedJson);
       toast.success("JSON formatted successfully!");
     } catch (error) {
-      // If parsing fails, attempt to fix common formatting issues
       try {
-        // Remove extra whitespace and newlines
-        let fixedInput = inputToFormat.replace(/\s+/g, ' ');
-        // Fix missing quotes around property names
-        fixedInput = fixedInput.replace(/(\w+)(?=\s*:)/g, '"$1"');
-        // Replace single quotes with double quotes
-        fixedInput = fixedInput.replace(/'/g, '"');
-        // Fix trailing commas
-        fixedInput = fixedInput.replace(/,\s*([\]}])/g, '$1');
+        let fixedInput = inputToFormat.replace(/\s+/g, ' ')
+          .replace(/(\w+)(?=\s*:)/g, '"$1"')
+          .replace(/'/g, '"')
+          .replace(/,\s*([\]}])/g, '$1');
 
         const parsedJson = JSON.parse(fixedInput);
         const prettyJson = JSON.stringify(parsedJson, null, 2);
@@ -79,15 +74,11 @@ const Index = () => {
     }
   };
 
-  const handleToggleTreeView = () => {
-    setIsTreeView(!isTreeView);
-  };
-
+  const handleToggleTreeView = () => setIsTreeView(!isTreeView);
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(formattedJson);
     toast.success("Formatted JSON copied to clipboard!");
   };
-
   const handleClearInput = () => {
     setJsonInput("");
     setFormattedJson("");
@@ -102,17 +93,10 @@ const Index = () => {
   };
 
   const getJsonDepth = (obj) => {
-    let depth = 0;
     if (obj && typeof obj === "object") {
-      Object.keys(obj).forEach((key) => {
-        const tempDepth = getJsonDepth(obj[key]);
-        if (tempDepth > depth) {
-          depth = tempDepth;
-        }
-      });
-      depth++;
+      return 1 + Math.max(0, ...Object.values(obj).map(getJsonDepth));
     }
-    return depth;
+    return 0;
   };
 
   return (
@@ -122,9 +106,7 @@ const Index = () => {
         <Card className="col-span-1 md:col-span-2">
           <CardContent className="p-6">
             <div className="flex justify-between items-center mb-2">
-              <Label htmlFor="jsonInput" className="text-lg font-semibold">
-                JSON Input
-              </Label>
+              <Label htmlFor="jsonInput" className="text-lg font-semibold">JSON Input</Label>
               <Button onClick={handleClearInput} variant="outline" size="sm">
                 <X className="mr-2 h-4 w-4" /> Clear
               </Button>
@@ -160,7 +142,7 @@ const Index = () => {
             <Label className="text-lg font-semibold mb-2 block">JSON Output</Label>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-auto">
               {isTreeView ? (
-                <pre className="text-sm">{JSON.stringify(JSON.parse(formattedJson), null, 2)}</pre>
+                <JsonTreeView data={JSON.parse(formattedJson || "{}")} />
               ) : (
                 <SyntaxHighlighter language="json" style={atomOneDark} customStyle={{background: 'transparent'}}>
                   {formattedJson}
@@ -188,9 +170,8 @@ const Index = () => {
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold mb-4">Quick Tip</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Type 'test' in the input field and click 'Format' to see a randomly generated JSON example.
-              The formatter will attempt to fix and format incorrectly structured JSON automatically.
-              Use the 'Clear' button to quickly empty the input field.
+              Type 'test' for a random JSON example. The formatter will attempt to fix incorrectly structured JSON.
+              Use 'Clear' to empty the input field. Toggle between raw JSON and tree view for easier visualization.
             </p>
           </CardContent>
         </Card>
