@@ -39,8 +39,8 @@ const Index = () => {
   const [jsonStats, setJsonStats] = useState({ keys: 0, depth: 0 });
 
   const handleFormatJson = () => {
-    let inputToFormat = jsonInput;
-    if (jsonInput.trim().toLowerCase() === "test") {
+    let inputToFormat = jsonInput.trim();
+    if (inputToFormat.toLowerCase() === "test") {
       inputToFormat = generateRandomJson();
       setJsonInput(inputToFormat);
       toast.info("Using randomly generated JSON for testing!");
@@ -98,8 +98,8 @@ const Index = () => {
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8 text-center text-primary">JSON Buddy</h1>
-      <div className="grid grid-cols-1 gap-6">
-        <Card className="col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="col-span-1 md:col-span-2">
           <CardContent className="p-6">
             <Label htmlFor="jsonInput" className="text-lg font-semibold mb-2 block">
               JSON Input
@@ -130,7 +130,7 @@ const Index = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-1">
+        <Card className="col-span-1 md:col-span-2">
           <CardContent className="p-6">
             <Label className="text-lg font-semibold mb-2 block">JSON Output</Label>
             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-auto">
@@ -144,31 +144,29 @@ const Index = () => {
             </div>
           </CardContent>
         </Card>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4">JSON Statistics</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
-                  <p className="text-2xl font-bold">{jsonStats.keys}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Number of keys</p>
-                </div>
-                <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg">
-                  <p className="text-2xl font-bold">{jsonStats.depth}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Depth of nesting</p>
-                </div>
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold mb-4">JSON Statistics</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
+                <p className="text-2xl font-bold">{jsonStats.keys}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Number of keys</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Quick Tip</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Type 'test' in the input field and click 'Format' to see a randomly generated, poorly-formatted JSON example.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="bg-green-100 dark:bg-green-900 p-4 rounded-lg">
+                <p className="text-2xl font-bold">{jsonStats.depth}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Depth of nesting</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Quick Tip</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Type 'test' in the input field and click 'Format' to see a randomly generated, poorly-formatted JSON example.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
