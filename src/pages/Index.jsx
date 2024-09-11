@@ -23,7 +23,6 @@ const generateRandomJson = () => {
     salary: null
   };
   
-  // Poorly format the JSON string
   return JSON.stringify(randomData)
     .replace(/[{},]/g, (match) => `\n${match}\n`)
     .replace(/:/g, ' :')
@@ -47,13 +46,32 @@ const Index = () => {
     }
 
     try {
+      // First attempt to parse the JSON
       const parsedJson = JSON.parse(inputToFormat);
       const prettyJson = JSON.stringify(parsedJson, null, 2);
       setFormattedJson(prettyJson);
       updateJsonStats(parsedJson);
       toast.success("JSON formatted successfully!");
     } catch (error) {
-      toast.error("Invalid JSON input!");
+      // If parsing fails, attempt to fix common formatting issues
+      try {
+        // Remove extra whitespace and newlines
+        let fixedInput = inputToFormat.replace(/\s+/g, ' ');
+        // Fix missing quotes around property names
+        fixedInput = fixedInput.replace(/(\w+)(?=\s*:)/g, '"$1"');
+        // Replace single quotes with double quotes
+        fixedInput = fixedInput.replace(/'/g, '"');
+        // Fix trailing commas
+        fixedInput = fixedInput.replace(/,\s*([\]}])/g, '$1');
+
+        const parsedJson = JSON.parse(fixedInput);
+        const prettyJson = JSON.stringify(parsedJson, null, 2);
+        setFormattedJson(prettyJson);
+        updateJsonStats(parsedJson);
+        toast.success("JSON was incorrectly formatted, but has been fixed and formatted!");
+      } catch (secondError) {
+        toast.error("Unable to parse or fix the JSON. Please check your input.");
+      }
     }
   };
 
@@ -164,6 +182,7 @@ const Index = () => {
             <h2 className="text-lg font-semibold mb-4">Quick Tip</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Type 'test' in the input field and click 'Format' to see a randomly generated, poorly-formatted JSON example.
+              The formatter will attempt to fix and format incorrectly structured JSON automatically.
             </p>
           </CardContent>
         </Card>
