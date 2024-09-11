@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ClipboardCopy, Eye, EyeOff, FileJson, Zap } from "lucide-react";
+import { ClipboardCopy, Eye, EyeOff, FileJson, Zap, X } from "lucide-react";
 
 const generateRandomJson = () => {
   const randomData = {
@@ -23,12 +23,7 @@ const generateRandomJson = () => {
     salary: null
   };
   
-  return JSON.stringify(randomData)
-    .replace(/[{},]/g, (match) => `\n${match}\n`)
-    .replace(/:/g, ' :')
-    .replace(/\[/g, '[\n  ')
-    .replace(/\]/g, '\n]')
-    .replace(/"/g, (match, index, string) => index % 2 === 0 ? `\n${match}` : `${match}\n`);
+  return JSON.stringify(randomData, null, 2);
 };
 
 const Index = () => {
@@ -93,6 +88,13 @@ const Index = () => {
     toast.success("Formatted JSON copied to clipboard!");
   };
 
+  const handleClearInput = () => {
+    setJsonInput("");
+    setFormattedJson("");
+    setJsonStats({ keys: 0, depth: 0 });
+    toast.info("JSON input cleared!");
+  };
+
   const updateJsonStats = (json) => {
     const keys = Object.keys(json).length;
     const depth = getJsonDepth(json);
@@ -119,9 +121,14 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="col-span-1 md:col-span-2">
           <CardContent className="p-6">
-            <Label htmlFor="jsonInput" className="text-lg font-semibold mb-2 block">
-              JSON Input
-            </Label>
+            <div className="flex justify-between items-center mb-2">
+              <Label htmlFor="jsonInput" className="text-lg font-semibold">
+                JSON Input
+              </Label>
+              <Button onClick={handleClearInput} variant="outline" size="sm">
+                <X className="mr-2 h-4 w-4" /> Clear
+              </Button>
+            </div>
             <Input
               id="jsonInput"
               as="textarea"
@@ -181,8 +188,9 @@ const Index = () => {
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold mb-4">Quick Tip</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Type 'test' in the input field and click 'Format' to see a randomly generated, poorly-formatted JSON example.
+              Type 'test' in the input field and click 'Format' to see a randomly generated JSON example.
               The formatter will attempt to fix and format incorrectly structured JSON automatically.
+              Use the 'Clear' button to quickly empty the input field.
             </p>
           </CardContent>
         </Card>
