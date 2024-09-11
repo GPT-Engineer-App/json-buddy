@@ -10,12 +10,17 @@ const BentoView = () => {
     const isArray = Array.isArray(value);
     const itemStyle = `p-4 bg-white shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.8)] transition-all duration-300 hover:shadow-[inset_5px_5px_10px_rgba(0,0,0,0.1),inset_-5px_-5px_10px_rgba(255,255,255,0.8)] border border-gray-200 rounded-lg`;
 
+    const getRandomSpan = () => {
+      const spans = ['col-span-1', 'col-span-2', 'row-span-1', 'row-span-2'];
+      return spans[Math.floor(Math.random() * spans.length)];
+    };
+
     if (typeof value === 'object' && value !== null) {
       return (
-        <Card key={key} className={`col-span-${isArray ? 2 : 1} row-span-${isArray ? 2 : 1} overflow-hidden border-0 shadow-none`}>
+        <Card key={key} className={`${getRandomSpan()} overflow-hidden border-0 shadow-none`}>
           <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
             <h3 className="font-bold mb-2 text-xl text-center text-gray-800">{key}</h3>
-            <div className={`grid ${isArray ? 'grid-cols-2' : 'grid-cols-1'} gap-4 w-full`}>
+            <div className={`grid grid-cols-2 gap-2 w-full`}>
               {isArray
                 ? value.map((item, index) => (
                     <Card key={index} className="overflow-hidden border-0 shadow-none">
@@ -33,7 +38,7 @@ const BentoView = () => {
     }
 
     return (
-      <Card key={key} className="col-span-1 row-span-1 overflow-hidden border-0 shadow-none">
+      <Card key={key} className={`${getRandomSpan()} overflow-hidden border-0 shadow-none`}>
         <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
           <h3 className="font-semibold mb-1 text-base text-center text-gray-700">{key}</h3>
           <p className="text-2xl font-bold text-gray-800 text-center">{JSON.stringify(value)}</p>
