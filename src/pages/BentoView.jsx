@@ -7,15 +7,25 @@ const BentoView = () => {
   const jsonData = location.state?.jsonData;
 
   const renderBentoItem = (key, value, depth = 0) => {
-    const itemStyle = `p-6 rounded-3xl ${depth === 0 ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-800 to-gray-700'} backdrop-blur-lg transition-all duration-300 hover:shadow-xl hover:scale-105`;
+    const isArray = Array.isArray(value);
+    const itemStyle = `p-6 rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-lg transition-all duration-300 hover:shadow-xl hover:scale-105`;
 
     if (typeof value === 'object' && value !== null) {
       return (
-        <Card key={key} className={`col-span-${Math.min(depth + 1, 3)} row-span-${Math.min(depth + 1, 3)} overflow-hidden border-0 shadow-2xl`}>
+        <Card key={key} className={`col-span-${isArray ? 2 : 1} row-span-${isArray ? 2 : 1} overflow-hidden border-0 shadow-2xl`}>
           <CardContent className={`${itemStyle} h-full flex flex-col`}>
-            <h3 className="font-bold mb-4 text-2xl truncate bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">{key}</h3>
-            <div className="grid grid-cols-2 gap-4 flex-grow overflow-auto">
-              {Object.entries(value).map(([subKey, subValue]) => renderBentoItem(subKey, subValue, depth + 1))}
+            <h3 className="font-bold mb-4 text-2xl text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">{key}</h3>
+            <div className={`grid ${isArray ? 'grid-cols-2' : 'grid-cols-1'} gap-4 flex-grow overflow-auto`}>
+              {isArray
+                ? value.map((item, index) => (
+                    <Card key={index} className="overflow-hidden border-0 shadow-lg">
+                      <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
+                        <p className="text-2xl font-bold text-white text-center">{item}</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                : Object.entries(value).map(([subKey, subValue]) => renderBentoItem(subKey, subValue, depth + 1))
+              }
             </div>
           </CardContent>
         </Card>
@@ -25,8 +35,8 @@ const BentoView = () => {
     return (
       <Card key={key} className="col-span-1 row-span-1 overflow-hidden border-0 shadow-2xl">
         <CardContent className={`${itemStyle} h-full flex flex-col justify-between items-center`}>
-          <h3 className="font-semibold mb-2 text-lg truncate bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">{key}</h3>
-          <p className="text-3xl font-bold truncate text-white text-center">{JSON.stringify(value)}</p>
+          <h3 className="font-semibold mb-2 text-lg text-center bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">{key}</h3>
+          <p className="text-4xl font-bold text-white text-center">{JSON.stringify(value)}</p>
         </CardContent>
       </Card>
     );
