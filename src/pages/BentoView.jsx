@@ -6,28 +6,31 @@ const BentoView = () => {
   const location = useLocation();
   const jsonData = location.state?.jsonData;
 
+  const getRandomColor = () => {
+    const colors = ['bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-pink-100', 'bg-purple-100', 'bg-indigo-100'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const getRandomSpan = () => {
+    const spans = ['col-span-1', 'col-span-2', 'row-span-1', 'row-span-2'];
+    return spans[Math.floor(Math.random() * spans.length)];
+  };
+
   const renderBentoItem = (key, value, depth = 0) => {
     const isArray = Array.isArray(value);
-    const itemStyle = `p-4 bg-white shadow-[5px_5px_10px_rgba(0,0,0,0.1),-5px_-5px_10px_rgba(255,255,255,0.8)] transition-all duration-300 hover:shadow-[inset_5px_5px_10px_rgba(0,0,0,0.1),inset_-5px_-5px_10px_rgba(255,255,255,0.8)] border border-gray-200 rounded-lg`;
-
-    const getRandomSpan = () => {
-      const spans = ['col-span-1', 'col-span-2', 'row-span-1', 'row-span-2'];
-      return spans[Math.floor(Math.random() * spans.length)];
-    };
+    const itemStyle = `${getRandomColor()} shadow-lg transition-all duration-300 hover:shadow-xl rounded-lg overflow-hidden transform hover:-translate-y-1`;
 
     if (typeof value === 'object' && value !== null) {
       return (
-        <Card key={key} className={`${getRandomSpan()} overflow-hidden border-0 shadow-none`}>
-          <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
+        <Card key={key} className={`${getRandomSpan()} ${itemStyle}`}>
+          <CardContent className="p-4 h-full flex flex-col justify-center">
             <h3 className="font-bold mb-2 text-xl text-center text-gray-800">{key}</h3>
-            <div className={`grid grid-cols-2 gap-2 w-full`}>
+            <div className="grid grid-cols-2 gap-2 w-full">
               {isArray
                 ? value.map((item, index) => (
-                    <Card key={index} className="overflow-hidden border-0 shadow-none">
-                      <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
-                        <p className="text-lg font-semibold text-gray-700 text-center">{item}</p>
-                      </CardContent>
-                    </Card>
+                    <div key={index} className="bg-white rounded p-2 text-center">
+                      <p className="text-sm font-semibold text-gray-700">{item}</p>
+                    </div>
                   ))
                 : Object.entries(value).map(([subKey, subValue]) => renderBentoItem(subKey, subValue, depth + 1))
               }
@@ -38,8 +41,8 @@ const BentoView = () => {
     }
 
     return (
-      <Card key={key} className={`${getRandomSpan()} overflow-hidden border-0 shadow-none`}>
-        <CardContent className={`${itemStyle} h-full flex flex-col justify-center items-center`}>
+      <Card key={key} className={`${getRandomSpan()} ${itemStyle}`}>
+        <CardContent className="p-4 h-full flex flex-col justify-center items-center">
           <h3 className="font-semibold mb-1 text-base text-center text-gray-700">{key}</h3>
           <p className="text-2xl font-bold text-gray-800 text-center">{JSON.stringify(value)}</p>
         </CardContent>
