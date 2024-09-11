@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { ClipboardCopy, Eye, EyeOff, FileJson, Zap, X } from "lucide-react";
+import { ClipboardCopy, Eye, EyeOff, FileJson, Zap, X, Grid } from "lucide-react";
 import JsonTreeView from "@/components/JsonTreeView";
+import { useNavigate } from "react-router-dom";
 
 const generateRandomJson = () => {
   const randomData = {
@@ -32,6 +33,7 @@ const Index = () => {
   const [formattedJson, setFormattedJson] = useState("");
   const [isTreeView, setIsTreeView] = useState(false);
   const [jsonStats, setJsonStats] = useState({ keys: 0, depth: 0 });
+  const navigate = useNavigate();
 
   const handleFormatJson = () => {
     let inputToFormat = jsonInput.trim();
@@ -99,6 +101,15 @@ const Index = () => {
     return 0;
   };
 
+  const handleCreateBento = () => {
+    try {
+      const parsedJson = JSON.parse(jsonInput);
+      navigate("/bento", { state: { jsonData: parsedJson } });
+    } catch (error) {
+      toast.error("Please enter valid JSON before creating a Bento view.");
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 max-w-4xl">
       <h1 className="text-4xl font-bold mb-8 text-center text-primary">JSON Buddy</h1>
@@ -120,7 +131,7 @@ const Index = () => {
               className="w-full mb-4 font-mono text-sm"
               placeholder="Paste your JSON here or type 'test' for a random example..."
             />
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
               <Button onClick={handleFormatJson} className="w-full">
                 <FileJson className="mr-2 h-4 w-4" /> Format
               </Button>
@@ -133,6 +144,9 @@ const Index = () => {
               </Button>
               <Button onClick={handleCopyToClipboard} className="w-full">
                 <ClipboardCopy className="mr-2 h-4 w-4" /> Copy
+              </Button>
+              <Button onClick={handleCreateBento} className="w-full">
+                <Grid className="mr-2 h-4 w-4" /> Create Bento
               </Button>
             </div>
           </CardContent>
@@ -172,6 +186,7 @@ const Index = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Type 'test' for a random JSON example. The formatter will attempt to fix incorrectly structured JSON.
               Use 'Clear' to empty the input field. Toggle between raw JSON and tree view for easier visualization.
+              Create a Bento grid view to see your JSON data in a visually appealing layout.
             </p>
           </CardContent>
         </Card>
