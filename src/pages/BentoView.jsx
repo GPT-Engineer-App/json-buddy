@@ -8,7 +8,7 @@ const BentoView = () => {
 
   const renderBentoItem = (key, value, depth = 0) => {
     const isArray = Array.isArray(value);
-    const itemStyle = `p-6 rounded-3xl bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-lg transition-all duration-300 hover:shadow-xl hover:scale-105`;
+    const itemStyle = `p-6 bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-lg transition-all duration-300 hover:shadow-xl hover:scale-105`;
 
     if (typeof value === 'object' && value !== null) {
       return (
